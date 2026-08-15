@@ -10,11 +10,12 @@ mixins  src/styles/mixins.scss      ->  mono-label, corner-brackets, breakpoints
 motion  src/styles/motion.css       ->  global k* keyframes
 ```
 
-- Colors and fonts exist only as tokens. No raw color literals outside `src/styles/`, with three
-  exceptions: the intro's deliberately monochrome film layer (`src/lib/launch/`), the canvas
-  starfield painter (`src/lib/starfield/sky.ts`), which paints outside CSS, and the translucent
-  hairline family `rgb(110 200 230 / ...)` used across the section components, a deliberate
-  literal carried from the prototype with no matching token.
+- Colors and fonts exist only as tokens. No raw hex outside `src/styles/`, with two exceptions:
+  the intro's deliberately monochrome film layer (`src/lib/launch/`) and the canvas starfield
+  painter (`src/lib/starfield/sky.ts`), which paints outside CSS. Translucent `rgb(r g b / a)`
+  literals that re-express a token color with alpha (hairlines, panel washes, chip fills) are
+  the carried-over prototype pattern and are fine in components; the amber-tinted card wash in
+  `Certifications.svelte` is the one literal with no token counterpart.
 - Tailwind for simple layout and spacing in markup; component SCSS for geometry,
   motion, and anything with math.
 - Fonts: Chakra Petch (display), IBM Plex Mono (labels and data), IBM Plex Sans (body).
