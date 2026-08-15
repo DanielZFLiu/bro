@@ -31,7 +31,7 @@ motion  src/styles/motion.css       ->  global k* keyframes
 
 ```
 standby -> ignite -> film -> starrise -> reveal -> site
-           (2s)     (~58s)   (4s)       (1.4s fade)
+           (2s)  reel length (4s)       (1.4s fade)
 ```
 
 State machine: `src/lib/launch/sequence.ts`. The film is a 16:9 box that scales to
@@ -44,5 +44,7 @@ decode AAC, so the e2e suite drives the silent synth reel through `?fps=N`.
 ## Adding a section
 
 Copy an existing component in `src/lib/sections/`, give it an id, put the copy in
-`src/lib/profile.ts`, add the nav entry, reuse `SectionHeading` and the card mixins.
-Keep type scales in `clamp()` and check 390px, 1528px, and 1920px widths.
+`src/lib/profile.ts`, add the nav entry there, then render the component in
+`src/routes/+page.svelte`: sections are mounted explicitly, so a nav entry without that
+render scrolls to nothing. Reuse `SectionHeading` and `corner-brackets`. Keep type scales
+in `clamp()` and check 390px, 1528px, and 1920px widths.
