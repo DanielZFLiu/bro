@@ -37,3 +37,9 @@ claude.md
 tmp/
 # superpowers specs (local only)
 docs/superpowers/
+
+# editor config (local only)
+.vscode/
+
+# sdd scratch workspaces
+/.superpowers/
