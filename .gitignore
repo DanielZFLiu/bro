@@ -23,3 +23,14 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 # Playwright
 test-results
+
+# reference folder
+reference/
+
+# ai related documents
+claude.md
+
+# tmp folder
+tmp/
+# superpowers specs (local only)
+docs/superpowers/
