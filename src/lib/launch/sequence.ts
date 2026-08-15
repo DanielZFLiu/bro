@@ -28,10 +28,10 @@ export function musicOffsetOnSkip(phase: Phase, elapsedSec: number, fps: number)
 export interface SequenceDeps {
 	audio: AudioEngine;
 	fallbackFps?: number;
-	startAtSite?: boolean;
+	startAtSite?: boolean; // ?intro=off share link: begin at 'site', silent
 	isFrameReady(i: number): boolean;
 	onPhase(phase: Phase): void;
-	onFrame(i: number): void;
+	onFrame(i: number): void; // -1 clears the reel
 }
 
 export interface LaunchSequence {
@@ -90,10 +90,7 @@ export function createLaunchSequence(deps: SequenceDeps): LaunchSequence {
 				const duration = FRAME_COUNT / fps;
 				if (usingReel && !musicStarted && elapsed >= duration - MUSIC_PRESTART_SEC) {
 					musicStarted = true;
-					deps.audio.startSiteMusic(
-						Math.max(0, MUSIC_DROP_SEC - (duration - elapsed)),
-						3
-					);
+					deps.audio.startSiteMusic(musicOffsetOnSkip('film', elapsed, fps), 3);
 				}
 				step();
 			},
@@ -126,11 +123,7 @@ export function createLaunchSequence(deps: SequenceDeps): LaunchSequence {
 		skip() {
 			if (phase === 'site') return;
 			const elapsed = phase === 'film' ? (performance.now() - filmStart) / 1000 : 0;
-			const offset = musicOffsetOnSkip(
-				phase,
-				elapsed,
-				fps || reelFps(null, deps.fallbackFps)
-			);
+			const offset = musicOffsetOnSkip(phase, elapsed, fps);
 			clearTimers();
 			deps.audio.stopReel();
 			setFrame(-1);

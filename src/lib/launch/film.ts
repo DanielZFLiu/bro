@@ -39,14 +39,17 @@ export function cuesFor(frame: number): FilmCues {
 }
 
 export function preloadFrames(onProgress: (loaded: number) => void): HTMLImageElement[] {
-	let loaded = 0;
+	let settled = 0;
 	return Array.from({ length: FRAME_COUNT }, (_, i) => {
 		const img = new Image();
 		img.src = frameUrl(i);
-		img.onload = () => {
-			loaded++;
-			if (loaded % 12 === 0 || loaded === FRAME_COUNT) onProgress(loaded);
+		// A frame that 404s still has to advance the count, or the loader stalls short of 100%.
+		const settle = () => {
+			settled++;
+			if (settled % 12 === 0 || settled === FRAME_COUNT) onProgress(settled);
 		};
+		img.onload = settle;
+		img.onerror = settle;
 		return img;
 	});
 }

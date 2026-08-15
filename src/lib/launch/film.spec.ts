@@ -20,6 +20,8 @@ describe('cuesFor', () => {
 		[30, 'rumble', true],
 		[42, 'rumble', true],
 		[43, 'rumble', false],
+		[29, 'shake', false],
+		[30, 'shake', true],
 		[40, 'shake', true],
 		[41, 'shake', false],
 		[44, 'pilot', false],

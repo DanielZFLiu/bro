@@ -174,8 +174,16 @@ export function createAudioEngine(
 
 		toggleMuted() {
 			muted = !muted;
-			if (reelGain) reelGain.gain.value = muted ? 0 : 1;
-			if (musicGain) musicGain.gain.value = muted ? 0 : musicVolume;
+			const now = ctx?.currentTime ?? 0;
+			// A bare .value write anchors a pending fade, which then ramps straight back over it.
+			const hold = (gain: GainNode | null, target: number) => {
+				if (!gain) return;
+				gain.gain.cancelScheduledValues(now);
+				gain.gain.setValueAtTime(target, now);
+			};
+			// Once site music has claimed playback the reel stays ducked, muted or not.
+			hold(reelGain, muted || musicSrc ? 0 : 1);
+			hold(musicGain, muted ? 0 : musicVolume);
 			return muted;
 		},
 
