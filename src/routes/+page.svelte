@@ -6,6 +6,7 @@
 	import Certifications from '$lib/sections/Certifications.svelte';
 	import Comms from '$lib/sections/Comms.svelte';
 	import SiteFooter from '$lib/sections/SiteFooter.svelte';
+	import Starfield from '$lib/starfield/Starfield.svelte';
 </script>
 
 <svelte:head>
@@ -16,12 +17,22 @@
 	/>
 </svelte:head>
 
-<SiteHeader muted={false} onreplay={() => {}} ontogglemute={() => {}} />
-<main>
-	<Hero introDone={true} />
-	<Experience />
-	<Education />
-	<Certifications />
-	<Comms />
-</main>
-<SiteFooter />
+<Starfield />
+<div class="site">
+	<SiteHeader muted={false} onreplay={() => {}} ontogglemute={() => {}} />
+	<main>
+		<Hero introDone={true} />
+		<Experience />
+		<Education />
+		<Certifications />
+		<Comms />
+	</main>
+	<SiteFooter />
+</div>
+
+<style>
+	.site {
+		position: relative;
+		z-index: 1;
+	}
+</style>
