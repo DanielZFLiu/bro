@@ -45,3 +45,19 @@ $bp-lg: 1024px;
 	font-size: $size;
 	letter-spacing: $tracking;
 }
+
+@mixin film-stage {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+}
+
+// The 32px margin is load-bearing: the phone e2e fill assertion (>= 0.9) has ~2% headroom.
+@mixin film-box {
+	position: relative;
+	aspect-ratio: 16 / 9;
+	width: min(100% - 32px, calc((100dvh - 32px) * 16 / 9));
+	container-type: size;
+	border: 3px solid #fff;
+}
