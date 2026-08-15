@@ -1,42 +1,33 @@
-# sv
+# bro
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Personal profile site for Shiqiu (Bill) Liu with a Gundam launch-sequence intro: an
+ink-style manga reel (120 frames from the 0083 catapult launch) synced to the clip's
+audio, then a starfield dossier with experience, education, certifications, and contact.
 
-## Creating a project
+Share link: append `?intro=off` to skip the intro and audio entirely.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Run
 
-```sh
-# create a new project
-npx sv create my-app
+```bash
+npm install
+npm run dev        # dev server
+npm test           # unit (vitest) + e2e (playwright)
+npm run check      # svelte-kit sync + svelte-check
+npm run lint       # prettier + eslint
 ```
 
-To recreate this project with the same configuration:
+## Deploy
 
-```sh
-# recreate this project
-npx sv@0.17.0 create --template minimal --types ts --add prettier eslint vitest="usages:unit,component" playwright sveltekit-adapter="adapter:cloudflare+cfTarget:workers" tailwindcss="plugins:none" --install npm .
-```
+Static SvelteKit build served by Cloudflare Workers:
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
+```bash
 npm run build
+npm run preview    # wrangler dev against the built worker
+npx wrangler deploy
 ```
 
-You can preview the production build with `npm run preview`.
+## Where next
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+- `docs/design.md`: design system and UI/UX guide
+- `docs/code-style.md`: code conventions
+- `docs/commit-conventions.md`: commit format
