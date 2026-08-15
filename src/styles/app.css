@@ -1,0 +1,53 @@
+@import 'tailwindcss';
+@import '@fontsource/chakra-petch/500.css';
+@import '@fontsource/chakra-petch/700.css';
+@import '@fontsource/chakra-petch/700-italic.css';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
+@import '@fontsource/ibm-plex-sans/400.css';
+@import '@fontsource/ibm-plex-sans/600.css';
+@import './motion.css';
+
+@theme {
+	--color-space: #04060b;
+	--color-panel: #090e17;
+	--color-ink: #dfe7f0;
+	--color-cyan: #62d3e8;
+	--color-cyan-bright: #a5e9f5;
+	--color-amber: #f0b445;
+	--color-steel: #aebccb;
+	--color-slate: #8fa1b3;
+	--color-dim: #5c6b7d;
+	--color-faint: #3d4a5c;
+	--color-mint: #7ee8c9;
+	--color-warn: #ffd056;
+	--color-paper: #e8e4d8;
+	--font-display: 'Chakra Petch', sans-serif;
+	--font-mono: 'IBM Plex Mono', monospace;
+	--font-sans: 'IBM Plex Sans', sans-serif;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	margin: 0;
+	background: var(--color-space);
+	color: var(--color-ink);
+	font-family: var(--font-sans);
+	-webkit-font-smoothing: antialiased;
+}
+
+a {
+	color: var(--color-cyan);
+	text-decoration: none;
+}
+
+a:hover {
+	color: var(--color-cyan-bright);
+}
+
+::selection {
+	background: rgb(98 211 232 / 0.3);
+}

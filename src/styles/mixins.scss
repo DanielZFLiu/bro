@@ -1,0 +1,47 @@
+$bp-sm: 640px;
+$bp-md: 768px;
+$bp-lg: 1024px;
+
+@mixin below($bp) {
+	@media (max-width: $bp - 1px) {
+		@content;
+	}
+}
+
+@mixin above($bp) {
+	@media (min-width: $bp) {
+		@content;
+	}
+}
+
+@mixin corner-brackets($color: var(--color-cyan)) {
+	position: relative;
+
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		width: 16px;
+		height: 16px;
+	}
+
+	&::before {
+		top: -1px;
+		left: -1px;
+		border-top: 2px solid $color;
+		border-left: 2px solid $color;
+	}
+
+	&::after {
+		bottom: -1px;
+		right: -1px;
+		border-bottom: 2px solid $color;
+		border-right: 2px solid $color;
+	}
+}
+
+@mixin mono-label($size: 12px, $tracking: 0.2em) {
+	font-family: var(--font-mono);
+	font-size: $size;
+	letter-spacing: $tracking;
+}
