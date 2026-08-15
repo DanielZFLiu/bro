@@ -20,6 +20,12 @@ describe('createStarData', () => {
 		expect(createStarData(1528, 883)).toEqual(createStarData(1528, 883));
 	});
 
+	it('draws the default sky from seed 83 and honours an explicit seed', () => {
+		// Pinned value: a change to the default seed or to the generator must be deliberate.
+		expect(createStarData(390, 844).stars[0].x).toBeCloseTo(109.94930858490989, 6);
+		expect(createStarData(390, 844, 84)).not.toEqual(createStarData(390, 844));
+	});
+
 	it('scales star count with area and always makes 6 nebula blobs', () => {
 		const small = createStarData(390, 844);
 		const large = createStarData(1920, 1080);
@@ -45,5 +51,23 @@ describe('createStarData', () => {
 		const glow = stars.filter((s) => s.glow).length / stars.length;
 		expect(glow).toBeGreaterThan(0.005);
 		expect(glow).toBeLessThan(0.05);
+	});
+
+	it('only flares stars that also glow', () => {
+		// The renderer reaches its flare branch only inside the glow branch. The `some` guard
+		// stops `every` from passing on a dataset that happens to hold no flares at all.
+		const { stars } = createStarData(1920, 1080);
+		expect(stars.some((s) => s.flare)).toBe(true);
+		expect(stars.every((s) => !s.flare || s.glow)).toBe(true);
+	});
+
+	it('zeroes the fields that belong to flags a star does not carry', () => {
+		const { stars } = createStarData(1920, 1080);
+		for (const s of stars) {
+			if (!s.flare) expect(s.flareSize).toBe(0);
+			if (!s.glow) expect(s.twinkleSpeed).toBe(0);
+			expect(s.riseThreshold).toBeGreaterThanOrEqual(0);
+			expect(s.riseThreshold).toBeLessThan(1);
+		}
 	});
 });

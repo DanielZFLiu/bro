@@ -3,6 +3,8 @@
 
 	let canvas: HTMLCanvasElement;
 
+	// Scroll is read from window inside these callbacks, not bound to $state: a reactive scroll
+	// value would be an effect dependency and rebuild the sky and its layers on every scroll.
 	$effect(() => {
 		const renderer = createSkyRenderer(canvas);
 		const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -16,8 +18,6 @@
 			renderer.render(now, window.scrollY);
 		};
 
-		// Scroll is read inside callbacks, not bound to $state: a reactive scroll
-		// value would rebuild the star data and layer canvases on every scroll.
 		const renderStatic = () => renderer.render(0, window.scrollY);
 		const onScroll = () => {
 			if (reduced.matches) renderStatic();
@@ -26,14 +26,20 @@
 			renderer.invalidate();
 			if (reduced.matches) renderStatic();
 		};
+		const applyMotionPreference = () => {
+			cancelAnimationFrame(raf);
+			if (reduced.matches) renderStatic();
+			else raf = requestAnimationFrame(loop);
+		};
 
-		if (reduced.matches) renderStatic();
-		else raf = requestAnimationFrame(loop);
+		applyMotionPreference();
+		reduced.addEventListener('change', applyMotionPreference);
 		window.addEventListener('resize', onResize);
 		window.addEventListener('scroll', onScroll, { passive: true });
 
 		return () => {
 			cancelAnimationFrame(raf);
+			reduced.removeEventListener('change', applyMotionPreference);
 			window.removeEventListener('resize', onResize);
 			window.removeEventListener('scroll', onScroll);
 		};
