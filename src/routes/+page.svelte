@@ -12,6 +12,11 @@
 	import Hero from '$lib/sections/Hero.svelte';
 	import SiteFooter from '$lib/sections/SiteFooter.svelte';
 	import SiteHeader from '$lib/sections/SiteHeader.svelte';
+	import { canonicalUrl, ogImageUrl, personJsonLdScript } from '$lib/seo';
+
+	const title = 'Shiqiu (Bill) Liu — Pilot Registry';
+	const description =
+		'Risk-focused financial analyst in Hong Kong — client due diligence, AML risk, quantitative analysis.';
 
 	// URL switches: ?intro=off is the share link (no intro, no audio);
 	// ?fps=N runs the silent synth reel at N fps (e2e shortens the 57.7s film).
@@ -63,11 +68,31 @@
 </script>
 
 <svelte:head>
-	<title>Shiqiu (Bill) Liu — Pilot Registry</title>
+	<title>{title}</title>
+	<meta name="description" content={description} />
+	<!-- Canonical also folds the ?intro=off and ?fps= share links into one indexed URL. -->
+	<link rel="canonical" href={canonicalUrl} />
+
+	<meta property="og:type" content="profile" />
+	<meta property="og:title" content={title} />
+	<meta property="og:description" content={description} />
+	<meta property="og:url" content={canonicalUrl} />
+	<meta property="og:site_name" content="Shiqiu (Bill) Liu" />
+	<meta property="og:image" content={ogImageUrl} />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
 	<meta
-		name="description"
-		content="Risk-focused financial analyst in Hong Kong — client due diligence, AML risk, quantitative analysis."
+		property="og:image:alt"
+		content="Pilot registry card for Shiqiu (Bill) Liu over ink cockpit art"
 	/>
+
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={title} />
+	<meta name="twitter:description" content={description} />
+	<meta name="twitter:image" content={ogImageUrl} />
+
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- serialized in-repo metadata, never user input -->
+	{@html personJsonLdScript}
 </svelte:head>
 
 <Starfield />
