@@ -30,6 +30,8 @@ export function createAudioEngine(
 	let reelGain: GainNode | null = null;
 	let musicSrc: AudioBufferSourceNode | null = null;
 	let musicGain: GainNode | null = null;
+	let pendingMusic: { offsetSec: number; fadeSec: number } | null = null;
+	let musicDecodeSettled = false;
 	let muted = false;
 
 	const ac = (): AudioContext | null => {
@@ -53,6 +55,8 @@ export function createAudioEngine(
 			return null;
 		}
 	};
+
+	// ── Synth primitives ────────────────────────────────────
 
 	const tone = (f0: number, f1: number, dur: number, type: OscillatorType, g0: number) => {
 		const a = ac();
@@ -92,16 +96,97 @@ export function createAudioEngine(
 		src.start(t);
 	};
 
+	// ── Reel and music playback ─────────────────────────────
+
+	const stopReel = () => {
+		try {
+			reelSrc?.stop();
+		} catch {
+			// already stopped
+		}
+		reelSrc = null;
+		reelGain = null;
+	};
+
+	const stopMusic = () => {
+		pendingMusic = null;
+		try {
+			musicSrc?.stop();
+		} catch {
+			// already stopped
+		}
+		musicSrc = null;
+		musicGain = null;
+	};
+
+	const startSiteMusic = (offsetSec: number, fadeSec: number) => {
+		if (musicSrc) return;
+		const a = ac();
+		if (!a) return;
+		const buf = musicBuf ?? reelBuf;
+		if (!buf) {
+			// Skipping the intro before the song decodes would otherwise leave the site silent.
+			pendingMusic = { offsetSec, fadeSec };
+			return;
+		}
+		const src = a.createBufferSource();
+		src.buffer = buf;
+		let startAt: number;
+		if (musicBuf) {
+			startAt = Math.max(0, Math.min(offsetSec, buf.duration - 1));
+		} else {
+			// No song decoded: loop the reel's calm mid-section as ambience instead.
+			src.loop = true;
+			src.loopStart = 24;
+			src.loopEnd = Math.min(52, buf.duration - 1);
+			startAt = 24;
+		}
+		src.onended = () => {
+			if (musicSrc === src) {
+				musicSrc = null;
+				musicGain = null;
+			}
+		};
+		const gain = a.createGain();
+		gain.gain.setValueAtTime(0, a.currentTime);
+		gain.gain.linearRampToValueAtTime(muted ? 0 : musicVolume, a.currentTime + fadeSec);
+		src.connect(gain).connect(a.destination);
+		src.start(0, startAt);
+		musicSrc = src;
+		musicGain = gain;
+		if (reelGain) {
+			reelGain.gain.setValueAtTime(reelGain.gain.value, a.currentTime);
+			reelGain.gain.linearRampToValueAtTime(0, a.currentTime + 2.5);
+		}
+	};
+
+	// The reel counts as a fallback only once the song's decode has settled without a buffer:
+	// reel.m4a is the smaller file and usually lands first.
+	const resumePendingMusic = () => {
+		const buf = musicBuf ?? (musicDecodeSettled ? reelBuf : null);
+		if (!pendingMusic || !buf) return;
+		const { offsetSec, fadeSec } = pendingMusic;
+		pendingMusic = null;
+		startSiteMusic(offsetSec, fadeSec);
+	};
+
 	return {
 		load() {
-			void decode(REEL_URL).then((b) => (reelBuf = b));
-			void decode(MUSIC_URL).then((b) => (musicBuf = b));
+			void decode(REEL_URL).then((b) => {
+				reelBuf = b;
+				resumePendingMusic();
+			});
+			void decode(MUSIC_URL).then((b) => {
+				musicBuf = b;
+				musicDecodeSettled = true;
+				resumePendingMusic();
+			});
 		},
 
 		reelDuration: () => reelBuf?.duration ?? null,
 
 		playReel() {
-			this.stopReel();
+			stopReel();
 			const a = ac();
 			if (!a || !reelBuf || !reelEnabled) return false;
 			const src = a.createBufferSource();
@@ -115,62 +200,11 @@ export function createAudioEngine(
 			return true;
 		},
 
-		stopReel() {
-			try {
-				reelSrc?.stop();
-			} catch {
-				// already stopped
-			}
-			reelSrc = null;
-			reelGain = null;
-		},
+		stopReel,
 
-		startSiteMusic(offsetSec, fadeSec) {
-			if (musicSrc) return;
-			const a = ac();
-			if (!a) return;
-			const buf = musicBuf ?? reelBuf;
-			if (!buf) return;
-			const src = a.createBufferSource();
-			src.buffer = buf;
-			let startAt: number;
-			if (musicBuf) {
-				startAt = Math.max(0, Math.min(offsetSec, buf.duration - 1));
-			} else {
-				// No song decoded: loop the reel's calm mid-section as ambience instead.
-				src.loop = true;
-				src.loopStart = 24;
-				src.loopEnd = Math.min(52, buf.duration - 1);
-				startAt = 24;
-			}
-			src.onended = () => {
-				if (musicSrc === src) {
-					musicSrc = null;
-					musicGain = null;
-				}
-			};
-			const gain = a.createGain();
-			gain.gain.setValueAtTime(0, a.currentTime);
-			gain.gain.linearRampToValueAtTime(muted ? 0 : musicVolume, a.currentTime + fadeSec);
-			src.connect(gain).connect(a.destination);
-			src.start(0, startAt);
-			musicSrc = src;
-			musicGain = gain;
-			if (reelGain) {
-				reelGain.gain.setValueAtTime(reelGain.gain.value, a.currentTime);
-				reelGain.gain.linearRampToValueAtTime(0, a.currentTime + 2.5);
-			}
-		},
+		startSiteMusic,
 
-		stopMusic() {
-			try {
-				musicSrc?.stop();
-			} catch {
-				// already stopped
-			}
-			musicSrc = null;
-			musicGain = null;
-		},
+		stopMusic,
 
 		toggleMuted() {
 			muted = !muted;
@@ -234,8 +268,8 @@ export function createAudioEngine(
 		},
 
 		dispose() {
-			this.stopReel();
-			this.stopMusic();
+			stopReel();
+			stopMusic();
 			void ctx?.close();
 			ctx = null;
 		}

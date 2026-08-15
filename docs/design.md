@@ -10,9 +10,11 @@ mixins  src/styles/mixins.scss      ->  mono-label, corner-brackets, breakpoints
 motion  src/styles/motion.css       ->  global k* keyframes
 ```
 
-- Colors and fonts exist only as tokens. No raw hex outside `src/styles/`, with two exceptions:
-  the intro's deliberately monochrome film layer (`src/lib/launch/`) and the canvas starfield
-  painter (`src/lib/starfield/sky.ts`), which paints outside CSS.
+- Colors and fonts exist only as tokens. No raw color literals outside `src/styles/`, with three
+  exceptions: the intro's deliberately monochrome film layer (`src/lib/launch/`), the canvas
+  starfield painter (`src/lib/starfield/sky.ts`), which paints outside CSS, and the translucent
+  hairline family `rgb(110 200 230 / ...)` used across the section components, a deliberate
+  literal carried from the prototype with no matching token.
 - Tailwind for simple layout and spacing in markup; component SCSS for geometry,
   motion, and anything with math.
 - Fonts: Chakra Petch (display), IBM Plex Mono (labels and data), IBM Plex Sans (body).
@@ -37,6 +39,11 @@ standby -> ignite -> film -> starrise -> reveal -> site
 State machine: `src/lib/launch/sequence.ts`. The film is a 16:9 box that scales to
 fill any viewport; SFX overlays size in container-query units. URL switches:
 `?intro=off` (share link), `?fps=N` (test reel).
+
+`?intro=off` skips the sequence, not its cost: the reel frames (~11 MB) still preload and the
+audio (~5 MB) still decodes, so REPLAY LAUNCH starts instantly. The page is prerendered from the
+standby phase, so the share link shows the standby panel for a beat until hydration reads the
+query string and swaps it for the site.
 
 The real-reel audio path is verified by hand only: Playwright's bundled Chromium cannot
 decode AAC, so the e2e suite drives the silent synth reel through `?fps=N`.

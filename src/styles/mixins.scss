@@ -61,3 +61,24 @@ $bp-lg: 1024px;
 	container-type: size;
 	border: 3px solid #fff;
 }
+
+// The starrise fade badge must stay pixel-identical to the film HUD it fades out of.
+@mixin film-hud-badge {
+	position: absolute;
+	top: 2.2cqh;
+	left: 2cqw;
+	@include mono-label(clamp(8px, 1.4cqw, 11px), 0.2em);
+	color: #fff;
+	background: rgb(0 0 0 / 0.72);
+	border: 1px solid rgb(255 255 255 / 0.4);
+	padding: 5px 12px;
+}
+
+// Width is the caller's: the film sets it per frame, the fade holds it full.
+@mixin film-progress-bar {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: 3px;
+	background: var(--color-amber);
+}

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { hero } from '../profile';
+	import { FRAME_COUNT } from './film';
 
 	let {
 		loadedPct,
@@ -22,7 +23,7 @@
 		<div class="name">{hero.nameLines.join(' ')}</div>
 		<div class="kana">{hero.kana}</div>
 		<button class="initiate" onclick={oninitiate}>▶ INITIATE LAUNCH SEQUENCE</button>
-		<div class="reel">FILM REEL: <span>{loadedPct}%</span> LOADED · 120 FRAMES</div>
+		<div class="reel">FILM REEL: <span>{loadedPct}%</span> LOADED · {FRAME_COUNT} FRAMES</div>
 		<div class="row">
 			<button onclick={onskip}>SKIP INTRO →</button>
 			<button onclick={ontogglemute}>{muted ? 'SND: OFF' : 'SND: ON'}</button>

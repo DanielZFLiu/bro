@@ -52,8 +52,10 @@
 	canvas {
 		position: fixed;
 		inset: 0;
-		width: 100vw;
-		height: 100vh;
+		/* Percentages, not vw/vh: a canvas is a replaced element, so inset alone leaves it at its
+		   backing-store size, and 100vw/100vh overshoot the scrollbar and the mobile URL bar. */
+		width: 100%;
+		height: 100%;
 		z-index: 0;
 	}
 </style>

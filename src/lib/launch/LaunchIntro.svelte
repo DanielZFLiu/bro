@@ -66,12 +66,12 @@
 		{:else if phase === 'film'}
 			<FilmFrame {frame} {images} {onskip} />
 		{:else}
-			<canvas bind:this={riseCanvas} class="rise"></canvas>
+			<canvas bind:this={riseCanvas} class="rise" aria-hidden="true"></canvas>
 			{#if phase === 'starrise'}
 				<div class="fade-stage">
 					<div class="film-fade">
 						<div class="bar"></div>
-						<div class="counter">REEL 0083 // FRAME 120 / 120</div>
+						<div class="counter">REEL 0083 // FRAME {FRAME_COUNT} / {FRAME_COUNT}</div>
 					</div>
 				</div>
 				<SkipButton onclick={onskip} />
@@ -114,23 +114,12 @@
 		animation: kFadeOut 0.9s ease 0.15s forwards;
 
 		.bar {
-			position: absolute;
-			bottom: 0;
-			left: 0;
+			@include film-progress-bar;
 			right: 0;
-			height: 3px;
-			background: var(--color-amber);
 		}
 
 		.counter {
-			position: absolute;
-			top: 2.2cqh;
-			left: 2cqw;
-			@include mono-label(clamp(8px, 1.4cqw, 11px), 0.2em);
-			color: #fff;
-			background: rgb(0 0 0 / 0.72);
-			border: 1px solid rgb(255 255 255 / 0.4);
-			padding: 5px 12px;
+			@include film-hud-badge;
 		}
 	}
 </style>

@@ -4,7 +4,8 @@ Personal profile site for Shiqiu (Bill) Liu with a Gundam launch-sequence intro:
 ink-style manga reel (120 frames from the 0083 catapult launch) synced to the clip's
 audio, then a starfield dossier with experience, education, certifications, and contact.
 
-Share link: append `?intro=off` to skip the intro and audio entirely.
+Share link: append `?intro=off` to skip the intro and audio, though the frames and audio still
+preload in the background so REPLAY LAUNCH is instant.
 
 ## Run
 

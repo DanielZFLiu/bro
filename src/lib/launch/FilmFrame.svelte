@@ -22,9 +22,9 @@
 
 <div class="stage" class:shake={cues.shake}>
 	<div class="box" data-testid="film-box">
-		<canvas bind:this={canvas}></canvas>
-		{#if cues.beep}<div class="sfx beep">ピッ</div>{/if}
-		{#if cues.rumble}<div class="rumble"><div>ゴゴゴゴ</div></div>{/if}
+		<canvas bind:this={canvas} aria-hidden="true"></canvas>
+		{#if cues.beep}<div class="sfx beep" aria-hidden="true">ピッ</div>{/if}
+		{#if cues.rumble}<div class="rumble" aria-hidden="true"><div>ゴゴゴゴ</div></div>{/if}
 		{#if cues.pilot}<div class="pilot">PILOT: S.LIU // VITALS ALL GREEN</div>{/if}
 		{#if cues.line}
 			<div class="line">
@@ -33,8 +33,8 @@
 			</div>
 		{/if}
 		{#if cues.warn}<div class="warn">⚠ GP-03 // リニア・カタパルト — FIELD CHARGED ⚠</div>{/if}
-		{#if cues.boom}<div class="sfx boom">ドオオオン…</div>{/if}
-		<div class="counter">REEL 0083 // FRAME {counter} / 120</div>
+		{#if cues.boom}<div class="sfx boom" aria-hidden="true">ドオオオン…</div>{/if}
+		<div class="counter">REEL 0083 // FRAME {counter} / {FRAME_COUNT}</div>
 		<div class="progress" style="width: {progressPct}%"></div>
 		<SkipButton onclick={onskip} />
 	</div>
@@ -174,21 +174,10 @@
 	}
 
 	.counter {
-		position: absolute;
-		top: 2.2cqh;
-		left: 2cqw;
-		@include mono-label(clamp(8px, 1.4cqw, 11px), 0.2em);
-		color: #fff;
-		background: rgb(0 0 0 / 0.72);
-		border: 1px solid rgb(255 255 255 / 0.4);
-		padding: 5px 12px;
+		@include film-hud-badge;
 	}
 
 	.progress {
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		height: 3px;
-		background: var(--color-amber);
+		@include film-progress-bar;
 	}
 </style>

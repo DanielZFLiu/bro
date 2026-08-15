@@ -9,7 +9,7 @@
 ## User interactions
 
 - SND toggle on the standby panel flips its label between SND: ON and SND: OFF on click.
-- SND toggle in the site header flips independently of how the intro was exited.
+- SND toggle in the site header flips after skipping the intro to reach the site.
 - Scroll cue latch: after reaching the site, the "▼ SCROLL FOR MISSION LOG" cue appears roughly
   2.8s later; a real scroll gesture past ~40px hides it, and scrolling back to the top does NOT
   bring it back (one-way latch until replay; the e2e test asserts the latch, not the replay reset).

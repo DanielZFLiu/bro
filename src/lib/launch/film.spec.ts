@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { FRAME_COUNT, cuesFor, frameUrl, type FilmCues } from './film';
+import { afterEach, describe, it, expect, vi } from 'vitest';
+import { FRAME_COUNT, cuesFor, frameUrl, preloadFrames, type FilmCues } from './film';
 
 describe('frameUrl', () => {
 	it('zero-pads to four digits across the reel', () => {
@@ -50,5 +50,35 @@ describe('cuesFor', () => {
 
 	it('shows no cues on the final frames', () => {
 		expect(Object.values(cuesFor(FRAME_COUNT - 1)).some(Boolean)).toBe(false);
+	});
+});
+
+describe('preloadFrames', () => {
+	const created: Array<{ src: string; onload?: () => void; onerror?: () => void }> = [];
+
+	class FakeImage {
+		src = '';
+		constructor() {
+			created.push(this);
+		}
+	}
+
+	afterEach(() => {
+		created.length = 0;
+		vi.unstubAllGlobals();
+	});
+
+	it('reaches full progress when some frames fail to load', () => {
+		vi.stubGlobal('Image', FakeImage);
+		const progress: number[] = [];
+		const images = preloadFrames((n) => progress.push(n));
+
+		expect(images).toHaveLength(FRAME_COUNT);
+		expect(created).toHaveLength(FRAME_COUNT);
+		created.forEach((img, i) => (i % 17 === 0 ? img.onerror?.() : img.onload?.()));
+
+		const cadence = Array.from({ length: FRAME_COUNT / 12 }, (_, i) => (i + 1) * 12);
+		expect(progress).toEqual(cadence);
+		expect(progress.at(-1)).toBe(FRAME_COUNT);
 	});
 });
