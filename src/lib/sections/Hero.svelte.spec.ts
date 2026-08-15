@@ -24,4 +24,13 @@ describe('Hero.svelte', () => {
 		// The cue hides via visibility (not just opacity) so visibility checks see it.
 		await expect.element(page.getByText('▼ SCROLL FOR MISSION LOG')).not.toBeVisible();
 	});
+
+	it('reveals the scroll cue after the arming delay once the intro is done', async () => {
+		render(Hero, { introDone: true });
+
+		const cue = page.getByText('▼ SCROLL FOR MISSION LOG');
+		await expect.element(cue).not.toBeVisible();
+		// Real timers: the poll has to outlast the component's 2.8s arming delay.
+		await expect.element(cue, { timeout: 6000 }).toBeVisible();
+	});
 });
