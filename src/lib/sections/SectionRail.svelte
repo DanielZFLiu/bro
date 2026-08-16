@@ -56,13 +56,14 @@
 <nav class="rail" aria-label="Section index">
 	{#each items as { label, href, id, index } (href)}
 		{@const current = id === activeId}
-		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- same-page fragment anchors; nothing to resolve -->
+		<!-- eslint-disable svelte/no-navigation-without-resolve -- same-page fragment anchors; nothing to resolve -->
 		<a
 			{href}
 			class:active={current}
 			aria-current={current ? 'location' : undefined}
 			onclick={() => lockOnClick(id)}
 		>
+			<!-- eslint-enable svelte/no-navigation-without-resolve -->
 			<span class="index">{index}</span>
 			<span class="label">{label}</span>
 		</a>
