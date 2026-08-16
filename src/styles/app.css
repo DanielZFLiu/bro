@@ -54,6 +54,30 @@ a:hover {
 	background: rgb(98 211 232 / 0.3);
 }
 
+html {
+	scrollbar-width: thin;
+	scrollbar-color: var(--color-faint) var(--color-space);
+}
+
+/* WebKit fallback; Chromium ignores these when the standard properties above are set. */
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--color-space);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--color-faint);
+	border: 2px solid var(--color-space);
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--color-dim);
+}
+
 /* Both classes are set by `use:reveal` after mount, so prerendered HTML is never hidden. */
 .reveal-pending {
 	opacity: 0;
