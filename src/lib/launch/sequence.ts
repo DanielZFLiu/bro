@@ -7,8 +7,8 @@ export type Phase = 'standby' | 'ignite' | 'film' | 'starrise' | 'reveal' | 'sit
 export const MUSIC_DROP_SEC = 58.2;
 export const IGNITE_BEEP_MS = 1000;
 export const IGNITE_MS = 2000;
-export const REVEAL_AT_MS = 4050;
-export const SITE_AT_MS = 5450;
+export const REVEAL_AT_MS = 3200;
+export const SITE_AT_MS = 4400;
 const MUSIC_PRESTART_SEC = 3;
 
 export function reelFps(audioDurationSec: number | null, fallbackFps = 2.2): number {

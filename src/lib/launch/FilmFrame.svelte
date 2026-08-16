@@ -23,8 +23,6 @@
 <div class="stage" class:shake={cues.shake}>
 	<div class="box" data-testid="film-box">
 		<canvas bind:this={canvas} aria-hidden="true"></canvas>
-		<div class="grain"></div>
-		<div class="vignette"></div>
 		{#if cues.beep}<div class="sfx beep" aria-hidden="true">ピッ</div>{/if}
 		{#if cues.rumble}<div class="rumble" aria-hidden="true"><div>ゴゴゴゴ</div></div>{/if}
 		{#if cues.pilot}<div class="pilot">PILOT: S.LIU // VITALS ALL GREEN</div>{/if}
@@ -70,37 +68,6 @@
 		display: block;
 		width: 100%;
 		height: 100%;
-		animation: kZoom 8s ease-in-out infinite alternate;
-	}
-
-	// Both sit above the canvas and below the SFX overlays, which paint later in the box.
-	// The overhang keeps the grain drift from exposing an edge.
-	.grain {
-		position: absolute;
-		inset: -10%;
-		pointer-events: none;
-		opacity: 0.07;
-		background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)'/%3E%3C/svg%3E")
-			repeat;
-		animation: kGrain 0.8s steps(3) infinite;
-	}
-
-	.vignette {
-		position: absolute;
-		inset: 0;
-		pointer-events: none;
-		background: radial-gradient(ellipse at center, transparent 52%, rgb(0 0 0 / 0.55) 100%);
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		canvas {
-			animation: none;
-		}
-
-		.grain,
-		.vignette {
-			display: none;
-		}
 	}
 
 	.sfx {

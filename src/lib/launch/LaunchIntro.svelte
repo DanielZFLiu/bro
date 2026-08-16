@@ -38,7 +38,9 @@
 		if (!rising || !riseCanvas) return;
 		const renderer = createSkyRenderer(riseCanvas);
 		const start = performance.now();
-		const HOLD = 450;
+		// Rise (HOLD + 2600) must finish inside REVEAL_AT_MS; the overlay fade below spans
+		// SITE_AT_MS minus REVEAL_AT_MS. Retune all four together.
+		const HOLD = 350;
 		let raf = 0;
 		let last = 0;
 		const loop = (now: number) => {
@@ -48,7 +50,7 @@
 			const elapsed = now - start;
 			const black = Math.min(1, elapsed / HOLD);
 			const bg = `rgb(${Math.round(4 * black)},${Math.round(6 * black)},${Math.round(11 * black)})`;
-			const t = Math.max(0, Math.min(1, (elapsed - HOLD) / 3300));
+			const t = Math.max(0, Math.min(1, (elapsed - HOLD) / 2600));
 			renderer.renderRise(now, 1 - Math.pow(1 - t, 3), window.scrollY, bg);
 		};
 		raf = requestAnimationFrame(loop);
@@ -91,7 +93,7 @@
 		overflow: hidden;
 
 		&.reveal {
-			animation: kFadeOut 1.4s ease forwards;
+			animation: kFadeOut 1.2s ease forwards;
 			pointer-events: none;
 		}
 	}
