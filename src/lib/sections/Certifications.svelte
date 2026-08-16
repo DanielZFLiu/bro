@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { certs } from '../profile';
+	import { reveal } from '../reveal';
 	import SectionHeading from './SectionHeading.svelte';
 </script>
 
@@ -7,7 +8,7 @@
 	<SectionHeading index="03" tag="QUALIFICATIONS" title="Certifications" />
 	<div class="cards">
 		{#each certs as cert (cert.title)}
-			<article class={cert.tone}>
+			<article class={cert.tone} use:reveal>
 				<div class="issuer">{cert.issuer}</div>
 				<h3>{cert.title}</h3>
 				<div class="detail">{cert.detail}</div>
@@ -39,6 +40,7 @@
 		padding: 22px;
 
 		&.amber {
+			@include card-hover(rgb(240 180 69 / 0.7));
 			border: 1px solid rgb(240 180 69 / 0.35);
 			background: rgb(20 15 6 / 0.5);
 
@@ -48,6 +50,7 @@
 		}
 
 		&.cyan {
+			@include card-hover(rgb(165 233 245 / 0.5));
 			border: 1px solid rgb(110 200 230 / 0.25);
 			background: rgb(9 14 23 / 0.72);
 

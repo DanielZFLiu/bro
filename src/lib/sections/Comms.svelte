@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { comms } from '../profile';
+	import { reveal } from '../reveal';
 </script>
 
-<section id="comms">
+<section id="comms" use:reveal>
 	<div class="tag">04 // COMMS</div>
 	<h2>Open a channel</h2>
 	<p>{comms.blurb}</p>

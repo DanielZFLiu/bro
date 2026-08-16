@@ -53,3 +53,12 @@ a:hover {
 ::selection {
 	background: rgb(98 211 232 / 0.3);
 }
+
+/* Both classes are set by `use:reveal` after mount, so prerendered HTML is never hidden. */
+.reveal-pending {
+	opacity: 0;
+}
+
+.reveal-in {
+	animation: kFadeUp 0.7s ease-out both;
+}

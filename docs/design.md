@@ -26,9 +26,14 @@ motion  src/styles/motion.css       ->  global k* keyframes
 - Amber marks credentials and section indexes; cyan marks identity and interaction;
   mint marks live status.
 - Cards: hairline border, translucent panel background, cyan corner brackets
-  (`@include corner-brackets`).
+  (`@include corner-brackets`), brightening toward their own accent on hover
+  (`@include card-hover`; the bracket tint rides the `--bracket-color` custom property).
 - Numbered sections: `NN // TAG` label + display-font heading + hairline rule
-  (`SectionHeading.svelte`).
+  (`SectionHeading.svelte`). A fixed right-edge rail (`SectionRail.svelte`) repeats the same
+  numbering on desktop and marks whichever section holds the upper middle of the viewport.
+- Cards and the comms block enter on first scroll into view (`use:reveal`, `src/lib/reveal.ts`).
+  The action hides nothing until it mounts, so prerendered and no-JS HTML stays visible, and it
+  no-ops entirely under reduced motion.
 
 ## Intro
 
@@ -54,5 +59,6 @@ decode AAC, so the e2e suite drives the silent synth reel through `?fps=N`.
 Copy an existing component in `src/lib/sections/`, give it an id, put the copy in
 `src/lib/profile.ts`, add the nav entry there, then render the component in
 `src/routes/+page.svelte`: sections are mounted explicitly, so a nav entry without that
-render scrolls to nothing. Reuse `SectionHeading` and `corner-brackets`. Keep type scales
-in `clamp()` and check 390px, 1528px, and 1920px widths.
+render scrolls to nothing. The nav entry also numbers the section in the rail, so its
+`NN // TAG` heading index has to match the entry's position. Reuse `SectionHeading` and
+`corner-brackets`. Keep type scales in `clamp()` and check 390px, 1528px, and 1920px widths.

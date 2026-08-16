@@ -3,10 +3,33 @@ import { FAST, gotoHydrated, skipToSite } from './journeys';
 
 test('header anchors scroll their sections into view', async ({ page }) => {
 	await skipToSite(page);
-	await page.getByRole('link', { name: 'MISSION LOG' }).click();
+	// Scoped to the header: the section rail carries the same labels on the right edge.
+	const header = page.getByRole('banner');
+	await header.getByRole('link', { name: 'MISSION LOG' }).click();
 	await expect(page.getByRole('heading', { name: 'Experience' })).toBeInViewport();
-	await page.getByRole('link', { name: 'COMMS', exact: true }).click();
+	await header.getByRole('link', { name: 'COMMS', exact: true }).click();
 	await expect(page.getByRole('heading', { name: 'Open a channel' })).toBeInViewport();
+});
+
+test('section rail marks the section the reader is on', async ({ page }) => {
+	await page.setViewportSize({ width: 1528, height: 883 });
+	await skipToSite(page);
+	const rail = page.getByRole('navigation', { name: 'Section index' });
+	const certs = rail.getByRole('link', { name: /CERTS/ });
+	await expect(rail.getByRole('link', { name: /MISSION LOG/ })).toHaveAttribute(
+		'aria-current',
+		'location'
+	);
+
+	await certs.click();
+	await expect(page.getByRole('heading', { name: 'Certifications' })).toBeInViewport();
+	await expect(certs).toHaveAttribute('aria-current', 'location');
+});
+
+test('section rail stays hidden on the phone viewport', async ({ page }) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await skipToSite(page);
+	await expect(page.getByRole('navigation', { name: 'Section index' })).toBeHidden();
 });
 
 test('contact links carry correct targets', async ({ page }) => {

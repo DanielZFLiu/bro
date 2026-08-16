@@ -10,6 +10,7 @@
 	import Education from '$lib/sections/Education.svelte';
 	import Experience from '$lib/sections/Experience.svelte';
 	import Hero from '$lib/sections/Hero.svelte';
+	import SectionRail from '$lib/sections/SectionRail.svelte';
 	import SiteFooter from '$lib/sections/SiteFooter.svelte';
 	import SiteHeader from '$lib/sections/SiteHeader.svelte';
 	import { canonicalUrl, ogImageUrl, personJsonLdScript } from '$lib/seo';
@@ -105,6 +106,7 @@
 		<Certifications />
 		<Comms />
 	</main>
+	<SectionRail />
 	<SiteFooter />
 </div>
 <LaunchIntro

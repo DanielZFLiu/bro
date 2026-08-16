@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { jobs } from '../profile';
+	import { reveal } from '../reveal';
 	import SectionHeading from './SectionHeading.svelte';
 </script>
 
@@ -7,7 +8,7 @@
 	<SectionHeading index="01" tag="MISSION LOG" title="Experience" />
 	<div class="cards">
 		{#each jobs as job (job.title)}
-			<article>
+			<article use:reveal>
 				<div class="head">
 					<h3>{job.title}</h3>
 					<span class="period">{job.period}</span>
@@ -44,6 +45,7 @@
 
 	article {
 		@include corner-brackets;
+		@include card-hover(rgb(165 233 245 / 0.5), var(--color-cyan-bright));
 		border: 1px solid rgb(110 200 230 / 0.2);
 		background: rgb(9 14 23 / 0.72);
 		padding: 24px 26px;

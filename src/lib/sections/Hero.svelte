@@ -1,11 +1,17 @@
 <script lang="ts">
 	import { hero } from '../profile';
+	import { decodeKicker } from './kicker-decode';
 
 	let { introDone }: { introDone: boolean } = $props();
+
+	const KICKER_DECODE_MS = 900;
 
 	let scrollY = $state(0);
 	let cueArmed = $state(false);
 	let hasScrolled = $state(false);
+	let decoding = $state(false);
+	let kicker = $state(hero.kicker);
+	let kickerLocale = $state(hero.kickerLocale);
 
 	// One-way latch (as the prototype): once the user scrolls, the cue never returns.
 	$effect(() => {
@@ -22,6 +28,34 @@
 		return () => clearTimeout(t);
 	});
 
+	// The two halves share one left-to-right sweep, so the locale starts where the kicker lands.
+	$effect(() => {
+		if (!introDone || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		const settle = () => {
+			decoding = false;
+			kicker = hero.kicker;
+			kickerLocale = hero.kickerLocale;
+		};
+		decoding = true;
+		const start = performance.now();
+		let raf = 0;
+		const step = (now: number) => {
+			const progress = (now - start) / KICKER_DECODE_MS;
+			if (progress >= 1) {
+				settle();
+				return;
+			}
+			kicker = decodeKicker(hero.kicker, progress * 2);
+			kickerLocale = decodeKicker(hero.kickerLocale, progress * 2 - 1);
+			raf = requestAnimationFrame(step);
+		};
+		raf = requestAnimationFrame(step);
+		return () => {
+			cancelAnimationFrame(raf);
+			settle();
+		};
+	});
+
 	const cueVisible = $derived(cueArmed && !hasScrolled);
 </script>
 
@@ -31,8 +65,15 @@
 	<div class="inner">
 		<div class="intro">
 			<div class="kicker">
-				{hero.kicker} <span class="text-faint">////</span>
-				{hero.kickerLocale}
+				{#if decoding}
+					<span class="sr-only">{hero.kicker} //// {hero.kickerLocale}</span>
+					<span aria-hidden="true"
+						>{kicker} <span class="text-faint">////</span> {kickerLocale}</span
+					>
+				{:else}
+					{hero.kicker} <span class="text-faint">////</span>
+					{hero.kickerLocale}
+				{/if}
 			</div>
 			<h1>{hero.nameLines[0]}<br />{hero.nameLines[1]}</h1>
 			<div class="kana">{hero.kana}</div>

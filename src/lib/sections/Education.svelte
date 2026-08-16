@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { schools } from '../profile';
+	import { reveal } from '../reveal';
 	import SectionHeading from './SectionHeading.svelte';
 </script>
 
@@ -7,7 +8,7 @@
 	<SectionHeading index="02" tag="TRAINING RECORD" title="Education" />
 	<div class="cards">
 		{#each schools as school (school.name)}
-			<article>
+			<article use:reveal>
 				<div class="meta">{school.meta}</div>
 				<h3>{school.name}</h3>
 				<div class="degree">{school.degree}</div>
@@ -42,6 +43,7 @@
 
 	article {
 		@include corner-brackets;
+		@include card-hover(rgb(165 233 245 / 0.5), var(--color-cyan-bright));
 		border: 1px solid rgb(110 200 230 / 0.2);
 		background: rgb(9 14 23 / 0.72);
 		padding: 24px 26px;
