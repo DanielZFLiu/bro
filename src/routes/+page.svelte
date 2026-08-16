@@ -84,7 +84,7 @@
 	<meta property="og:image:height" content="630" />
 	<meta
 		property="og:image:alt"
-		content="Pilot registry card for Shiqiu (Bill) Liu over ink cockpit art"
+		content="Pilot registry card for Shiqiu (Bill) Liu with his manga-style portrait"
 	/>
 
 	<meta name="twitter:card" content="summary_large_image" />
