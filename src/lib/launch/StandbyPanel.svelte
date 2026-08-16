@@ -84,14 +84,9 @@
 		border: none;
 		padding: 16px clamp(20px, 4vw, 34px);
 		cursor: pointer;
-		animation: kGlow 2.4s ease-in-out infinite;
 
 		&:hover {
 			background: var(--color-cyan);
-		}
-
-		@media (prefers-reduced-motion: reduce) {
-			animation: none;
 		}
 	}
 

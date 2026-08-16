@@ -9,17 +9,35 @@
 	}));
 
 	let activeId = $state(items[0].id);
+	let holdUntil = 0;
+
+	// A click marks its target immediately and holds it while the smooth scroll runs;
+	// scrollspy resumes afterward.
+	const lockOnClick = (id: string) => {
+		activeId = id;
+		holdUntil = performance.now() + 1500;
+	};
 
 	// Sections are ranked against a band across the upper middle of the viewport; the first one
-	// in document order that touches it owns the rail, and the last winner sticks over the
-	// hero and the footer, where no section reaches the band.
+	// in document order that touches it owns the rail. At the very bottom the last section wins
+	// outright: a short final section can never reach the band on a tall viewport.
 	$effect(() => {
 		const inBand: Record<string, boolean> = {};
+		const atBottom = () =>
+			window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4;
+		const choose = () => {
+			if (performance.now() < holdUntil) return;
+			if (atBottom()) {
+				activeId = items[items.length - 1].id;
+				return;
+			}
+			const first = items.find(({ id }) => inBand[id]);
+			if (first) activeId = first.id;
+		};
 		const observer = new IntersectionObserver(
 			(entries) => {
 				for (const entry of entries) inBand[entry.target.id] = entry.isIntersecting;
-				const first = items.find(({ id }) => inBand[id]);
-				if (first) activeId = first.id;
+				choose();
 			},
 			{ rootMargin: '-30% 0px -55% 0px' }
 		);
@@ -27,7 +45,11 @@
 			const section = document.getElementById(id);
 			if (section) observer.observe(section);
 		}
-		return () => observer.disconnect();
+		window.addEventListener('scroll', choose, { passive: true });
+		return () => {
+			observer.disconnect();
+			window.removeEventListener('scroll', choose);
+		};
 	});
 </script>
 
@@ -35,7 +57,12 @@
 	{#each items as { label, href, id, index } (href)}
 		{@const current = id === activeId}
 		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- same-page fragment anchors; nothing to resolve -->
-		<a {href} class:active={current} aria-current={current ? 'location' : undefined}>
+		<a
+			{href}
+			class:active={current}
+			aria-current={current ? 'location' : undefined}
+			onclick={() => lockOnClick(id)}
+		>
 			<span class="index">{index}</span>
 			<span class="label">{label}</span>
 		</a>
