@@ -21,22 +21,26 @@
 </script>
 
 <div class="stage" class:shake={cues.shake}>
-	<div class="box" data-testid="film-box">
-		<canvas bind:this={canvas} aria-hidden="true"></canvas>
-		{#if cues.beep}<div class="sfx beep" aria-hidden="true">ピッ</div>{/if}
-		{#if cues.rumble}<div class="rumble" aria-hidden="true"><div>ゴゴゴゴ</div></div>{/if}
-		{#if cues.pilot}<div class="pilot">PILOT: S.LIU // VITALS ALL GREEN</div>{/if}
-		{#if cues.line}
-			<div class="line">
-				<div class="slam">ビル・リュウ、行きます!!</div>
-				<div class="sub">BILL LIU — LAUNCHING</div>
-			</div>
-		{/if}
-		{#if cues.warn}<div class="warn">⚠ GP-03 // リニア・カタパルト — FIELD CHARGED ⚠</div>{/if}
-		{#if cues.boom}<div class="sfx boom" aria-hidden="true">ドオオオン…</div>{/if}
+	<div class="frame">
+		<div class="box" data-testid="film-box">
+			<canvas bind:this={canvas} aria-hidden="true"></canvas>
+			{#if cues.beep}<div class="sfx beep" aria-hidden="true">ピッ</div>{/if}
+			{#if cues.rumble}<div class="rumble" aria-hidden="true"><div>ゴゴゴゴ</div></div>{/if}
+			{#if cues.pilot}<div class="pilot">PILOT: S.LIU // VITALS ALL GREEN</div>{/if}
+			{#if cues.line}
+				<div class="line">
+					<div class="slam">ビル・リュウ、行きます!!</div>
+					<div class="sub">BILL LIU — LAUNCHING</div>
+				</div>
+			{/if}
+			{#if cues.warn}
+				<div class="warn">⚠ GP-03 // リニア・カタパルト — FIELD CHARGED ⚠</div>
+			{/if}
+			{#if cues.boom}<div class="sfx boom" aria-hidden="true">ドオオオン…</div>{/if}
+			<div class="progress" style="width: {progressPct}%"></div>
+		</div>
 		<div class="counter">REEL 0083 // FRAME {counter} / {FRAME_COUNT}</div>
-		<div class="progress" style="width: {progressPct}%"></div>
-		<SkipButton onclick={onskip} />
+		<SkipButton onclick={onskip} class="skip" />
 	</div>
 </div>
 
@@ -57,11 +61,14 @@
 		}
 	}
 
+	.frame {
+		@include film-frame;
+		animation: kFadeIn 0.8s ease;
+	}
+
 	.box {
 		@include film-box;
 		background: #000;
-		overflow: hidden;
-		animation: kFadeIn 0.8s ease;
 	}
 
 	canvas {
@@ -70,12 +77,23 @@
 		height: 100%;
 	}
 
-	.sfx {
-		position: absolute;
+	// White glyphs over white ink art: on small boxes the stroke paints behind the fill instead of
+	// eating it, which already halves the outline that shows, and a soft glow separates them.
+	.sfx,
+	.rumble div {
 		font-family: var(--font-display);
 		font-weight: 700;
 		color: #fff;
 		-webkit-text-stroke: 2px #000;
+
+		@include film-small-box {
+			paint-order: stroke;
+			text-shadow: 0 0 8px rgb(0 0 0 / 0.6);
+		}
+	}
+
+	.sfx {
+		position: absolute;
 		transform: skew(-8deg);
 	}
 
@@ -84,6 +102,10 @@
 		right: 4cqw;
 		font-size: clamp(22px, 6cqw, 52px);
 		animation: kSfxIn 0.3s cubic-bezier(0.2, 1.4, 0.4, 1);
+
+		@include film-small-box {
+			font-size: clamp(28px, 8cqw, 40px);
+		}
 	}
 
 	.boom {
@@ -91,6 +113,10 @@
 		right: 5cqw;
 		font-size: clamp(24px, 6.5cqw, 64px);
 		animation: kSfxIn 0.35s cubic-bezier(0.2, 1.4, 0.4, 1);
+
+		@include film-small-box {
+			font-size: clamp(30px, 8.5cqw, 44px);
+		}
 	}
 
 	.rumble {
@@ -101,13 +127,14 @@
 
 		div {
 			writing-mode: vertical-rl;
-			font-family: var(--font-display);
-			font-weight: 700;
 			font-size: clamp(30px, 8cqw, 78px);
-			color: #fff;
-			-webkit-text-stroke: 2px #000;
 			transform: skew(0deg, -4deg);
 			letter-spacing: 0.08em;
+
+			// Four vertical glyphs have to clear the box height, so this stays under the others.
+			@include film-small-box {
+				font-size: clamp(36px, 10cqw, 46px);
+			}
 		}
 	}
 
@@ -149,6 +176,10 @@
 		box-shadow: 0 0 0 3px #fff;
 		animation: kSlam 0.35s ease-out;
 		max-width: 94cqw;
+
+		@include film-small-box {
+			font-size: clamp(23px, 7cqw, 34px);
+		}
 	}
 
 	.sub {
@@ -171,6 +202,13 @@
 		padding: 8px 18px;
 		white-space: nowrap;
 		animation: kBlink 1s steps(1) infinite;
+
+		// Width is explicit: shrink-to-fit against `left: 50%` would wrap at half the box.
+		@include film-small-box {
+			width: 92cqw;
+			white-space: normal;
+			text-align: center;
+		}
 	}
 
 	.counter {
@@ -179,5 +217,18 @@
 
 	.progress {
 		@include film-progress-bar;
+	}
+
+	// The button hangs off the frame, so the margins hold it inside the film border; a box with
+	// no room for chrome steps it below the frame instead.
+	.frame :global(.skip) {
+		margin: 0 $film-border $film-border 0;
+
+		@include film-small-box {
+			top: 100%;
+			bottom: auto;
+			right: 0;
+			margin: 6px 0 0;
+		}
 	}
 </style>

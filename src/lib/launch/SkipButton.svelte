@@ -1,8 +1,8 @@
 <script lang="ts">
-	let { onclick }: { onclick: () => void } = $props();
+	let { onclick, class: cls = '' }: { onclick: () => void; class?: string } = $props();
 </script>
 
-<button {onclick}>SKIP →</button>
+<button class={cls} {onclick}>SKIP →</button>
 
 <style lang="scss">
 	@use '../../styles/mixins' as *;

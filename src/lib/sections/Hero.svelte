@@ -128,14 +128,24 @@
 		max-width: 1240px;
 		margin-inline: auto;
 
+		// One column on phones, with no gap: the dissolved intro's children carry the margins
+		// that space the text stack, and a flex gap would double them.
 		@include below($bp-md) {
-			gap: 36px;
+			flex-direction: column;
+			align-items: stretch;
+			gap: 0;
 		}
 	}
 
+	// The intro's box dissolves on phones so its children order against the portrait:
+	// text stack, then the medallion, then the cue.
 	.intro {
 		flex: 1 1 480px;
 		min-width: min(320px, 100%);
+
+		@include below($bp-md) {
+			display: contents;
+		}
 	}
 
 	.kicker {
@@ -189,6 +199,12 @@
 			opacity 1.1s ease,
 			visibility 0s linear 1.1s;
 
+		@include below($bp-md) {
+			order: 2;
+			margin-top: 28px;
+			text-align: center;
+		}
+
 		&.visible {
 			opacity: 1;
 			visibility: visible;
@@ -209,6 +225,11 @@
 		align-items: center;
 		gap: 12px;
 		margin-inline: auto;
+
+		@include below($bp-md) {
+			order: 1;
+			margin-top: 36px;
+		}
 	}
 
 	.ring {

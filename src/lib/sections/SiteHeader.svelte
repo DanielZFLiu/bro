@@ -10,14 +10,16 @@
 
 <header>
 	<div class="brand">S.LIU <span class="text-cyan">//</span> HKG</div>
-	<nav>
+	<nav class="links">
 		{#each nav as { label, href } (href)}
 			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- same-page fragment anchors; nothing to resolve -->
 			<a {href}>{label}</a>
 		{/each}
+	</nav>
+	<div class="controls">
 		<button class="replay" onclick={onreplay}>▶ REPLAY LAUNCH</button>
 		<button class="snd" onclick={ontogglemute}>{muted ? 'SND: OFF' : 'SND: ON'}</button>
-	</nav>
+	</div>
 </header>
 
 <style lang="scss">
@@ -36,7 +38,10 @@
 		backdrop-filter: blur(10px);
 		border-bottom: 1px solid rgb(110 200 230 / 0.18);
 
+		// Two deliberate rows on phones: brand and controls, then the links beneath them.
 		@include below($bp-md) {
+			flex-wrap: wrap;
+			gap: 10px 12px;
 			padding: 10px 14px;
 		}
 	}
@@ -47,17 +52,19 @@
 		white-space: nowrap;
 	}
 
-	nav {
+	.links {
 		display: flex;
 		align-items: center;
-		justify-content: flex-end;
 		flex-wrap: wrap;
 		gap: 8px 16px;
+		margin-left: auto; // packs the links and the controls together against the right edge
 		@include mono-label(11px, 0.12em);
 
 		@include below($bp-md) {
-			gap: 6px 10px;
-			letter-spacing: 0.06em;
+			order: 1;
+			flex-basis: 100%;
+			justify-content: space-between;
+			letter-spacing: 0.04em;
 		}
 
 		a {
@@ -70,12 +77,27 @@
 		}
 	}
 
+	.controls {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+
+		@include below($bp-md) {
+			gap: 8px;
+		}
+	}
+
 	button {
 		@include mono-label(11px, 0.12em);
 		white-space: nowrap;
 		background: none;
 		padding: 5px 10px;
 		cursor: pointer;
+
+		@include below($bp-md) {
+			letter-spacing: 0.05em;
+			padding: 5px 8px;
+		}
 	}
 
 	.replay {

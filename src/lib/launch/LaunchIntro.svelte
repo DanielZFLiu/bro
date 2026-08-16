@@ -72,7 +72,7 @@
 			{#if phase === 'starrise'}
 				<div class="fade-stage">
 					<div class="film-fade">
-						<div class="bar"></div>
+						<div class="box"><div class="bar"></div></div>
 						<div class="counter">REEL 0083 // FRAME {FRAME_COUNT} / {FRAME_COUNT}</div>
 					</div>
 				</div>
@@ -112,8 +112,12 @@
 	}
 
 	.film-fade {
-		@include film-box;
+		@include film-frame;
 		animation: kFadeOut 0.9s ease 0.15s forwards;
+
+		.box {
+			@include film-box;
+		}
 
 		.bar {
 			@include film-progress-bar;

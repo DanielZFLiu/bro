@@ -2,6 +2,9 @@ $bp-sm: 640px;
 $bp-md: 768px;
 $bp-lg: 1024px;
 
+$film-border: 3px;
+$film-small: 520px;
+
 @mixin below($bp) {
 	@media (max-width: $bp - 0.02px) {
 		@content;
@@ -10,6 +13,13 @@ $bp-lg: 1024px;
 
 @mixin above($bp) {
 	@media (min-width: $bp) {
+		@content;
+	}
+}
+
+// Below this the film box is too small to hold its own chrome and legible SFX.
+@mixin film-small-box {
+	@container (max-width: #{$film-small}) {
 		@content;
 	}
 }
@@ -69,25 +79,43 @@ $bp-lg: 1024px;
 	place-items: center;
 }
 
+// Outer geometry of the film, so HUD chrome can hang off it clear of the box's overflow.
 // The 32px margin is load-bearing: the phone e2e fill assertion (>= 0.9) has ~2% headroom.
-@mixin film-box {
+@mixin film-frame {
 	position: relative;
 	aspect-ratio: 16 / 9;
 	width: min(100% - 32px, calc((100dvh - 32px) * 16 / 9));
 	container-type: size;
-	border: 3px solid #fff;
 }
 
-// The starrise fade badge must stay pixel-identical to the film HUD it fades out of.
+// Fills its frame exactly, so the box measures the same as the frame it sits in.
+@mixin film-box {
+	position: absolute;
+	inset: 0;
+	container-type: size;
+	border: $film-border solid #fff;
+	overflow: hidden;
+}
+
+// The starrise fade badge must stay pixel-identical to the film HUD it fades out of, so both
+// regimes live here: inside the film border on wide frames, stepped above it on small ones.
 @mixin film-hud-badge {
 	position: absolute;
 	top: 2.2cqh;
 	left: 2cqw;
+	margin: $film-border 0 0 $film-border;
 	@include mono-label(clamp(8px, 1.4cqw, 11px), 0.2em);
 	color: #fff;
 	background: rgb(0 0 0 / 0.72);
 	border: 1px solid rgb(255 255 255 / 0.4);
 	padding: 5px 12px;
+
+	@include film-small-box {
+		top: auto;
+		bottom: 100%;
+		left: 0;
+		margin: 0 0 6px;
+	}
 }
 
 // Width is the caller's: the film sets it per frame, the fade holds it full.
