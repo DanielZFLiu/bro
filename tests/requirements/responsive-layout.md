@@ -6,7 +6,7 @@ was approved on), desktop 1920×1080 (where the prototype letterboxed badly).
 ## Happy paths
 
 - Site (after skipping the intro) has no horizontal overflow at any tested viewport.
-- Hero name and portrait placeholder are visible at every viewport.
+- Hero name and the pilot portrait are visible at every viewport.
 
 ## Edge cases
 

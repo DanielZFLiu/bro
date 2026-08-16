@@ -21,8 +21,7 @@ for (const vp of viewports) {
 		await page.setViewportSize({ width: vp.width, height: vp.height });
 		await skipToSite(page);
 		await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-		// The placeholder label has a <br>, so its text is 'AWAITINGPILOT PHOTO'; match a clean substring.
-		await expect(page.getByText('PILOT PHOTO')).toBeVisible();
+		await expect(page.getByRole('img', { name: 'Portrait of Bill Liu' })).toBeVisible();
 	});
 
 	test(`film box fits and fills the viewport at ${vp.name}`, async ({ page }) => {

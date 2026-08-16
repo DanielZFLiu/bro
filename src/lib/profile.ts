@@ -37,7 +37,7 @@ export const hero = {
 	bio: 'Risk-focused financial analyst at <strong class="text-ink">Huatai Financial Holdings (Hong Kong)</strong>. Client due diligence, AML risk management, and quantitative analysis — Python and SQL under the hood, trained at Rotman and Waterloo.',
 	chips: ['CFA LEVEL II', 'PYTHON · R · MYSQL', 'P&L MODELLING'],
 	portraitTag: 'ID-1997 // ACTIVE DUTY',
-	portraitSrc: null as string | null // drop a photo in static/ and point this at it
+	portraitSrc: '/portrait.webp' as string | null
 };
 
 export const jobs: Job[] = [
